@@ -10,4 +10,4 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ./
         with:
-          MY_NAME: "Sandesh"
+          type: "create"
