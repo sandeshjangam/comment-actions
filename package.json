@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "ncc build src/action.js -o dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -16,5 +17,12 @@
   "bugs": {
     "url": "https://github.com/sandeshjangam/comment-actions/issues"
   },
-  "homepage": "https://github.com/sandeshjangam/comment-actions#readme"
+  "homepage": "https://github.com/sandeshjangam/comment-actions#readme",
+  "dependencies": {
+    "@actions/core": "^1.4.0",
+    "@actions/github": "^5.0.0"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.29.0"
+  }
 }
