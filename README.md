@@ -1,1 +1,1 @@
-# comment-actions
+# smart-comment-actions
