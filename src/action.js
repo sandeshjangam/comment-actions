@@ -4,10 +4,34 @@ const { inspect } = require("util");
 
 async function run() {
 
-	let actionType, body, issueNumber, owner, repo;
+	let owner, repo, actionType, body, issueNumber, commentId;
 
 	const token = core.getInput( "token" );
 	const octokit = github.getOctokit( token );
+
+	async function updateComment( replace = true ) {
+		
+		if ( ! commentId ) {
+			core.setFailed( "Commentd ID is missing.");
+			return;
+		}
+
+		if ( ! body ) {
+			core.setFailed("Comment body is missing.");
+			return;
+		}
+		
+		await octokit.rest.issues.updateComment({
+			owner: owner,
+			repo: repo,
+			comment_id: commentId,
+			body: body,
+		});
+		
+		core.info( `Comment is modified. Comment ID: '${commentId}'.`);
+		
+		core.setOutput( "comment_id", commentId );
+	}
 
 	async function createComment() {
 		
@@ -31,22 +55,26 @@ async function run() {
 		core.info( `Created a comment on issue number: '${issueNumber}'.` );
 		core.info( `Comment ID: '${comment.id}'.`);
 		
-		core.setOutput("comment-id", comment.id);
+		core.setOutput( "comment_id", comment.id );
 	}
 
 	try {
 		
 		const repository = core.getInput('repository');
+		[owner, repo] = repository ? repository.split('/') : process.env.GITHUB_REPOSITORY.split('/');
 		
 		// Assign variables.
 		actionType = core.getInput('type');
 		body = core.getInput('body');
 		issueNumber = core.getInput('number');
-		[owner, repo] = repository ? repository.split('/') : process.env.GITHUB_REPOSITORY.split('/');
+		commentId = core.getInput('comment_id');
 		
 		switch ( actionType ) {
 			case 'create':
 				createComment();
+				break;
+			case 'update':
+				updateComment( true );
 				break;
 			default:
 				break;

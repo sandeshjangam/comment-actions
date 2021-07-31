@@ -8,8 +8,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      
       - uses: ./
         with:
           type: "create"
           body: "Test comment on PR"
           number: ${{ github.event.pull_request.number }}
+
+      - uses: ./
+        with:
+          type: "update"
+          body: "Edit: The test comment is modified"
+          comment_id: 890309730
