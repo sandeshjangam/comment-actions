@@ -12,3 +12,4 @@ jobs:
         with:
           type: "create"
           body: "Test comment on PR"
+          number: ${{ github.event.pull_request.number }}

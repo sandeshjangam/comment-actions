@@ -2,12 +2,19 @@ name: 'Smart Comment Actions'
 description: 'Create, edit, delete or find pull request or issue comment'
 inputs:
   token:
-    description: 'GitHub toke'
+    description: 'GitHub token'
     default: ${{ github.token }}
+    required: false
+  repository:
+    description: 'The GitHub repository'
+    default: ${{ github.repository }}
     required: false
   type:
     description: create|edit|delete|find
     required: true
+  number:
+    description: 'The number of the issue or pull request'
+    required: false
   body:
     description: 'The comment body'
     # default: 'The comment body'
