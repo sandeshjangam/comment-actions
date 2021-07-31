@@ -4,7 +4,7 @@ const github = require('@actions/github');
 async function run() {
 
 	try {
-		const [owner, repo] = $GITHUB_WORKSPACE.split('/')
+		const [owner, repo] = process.env.GITHUB_WORKSPACE.split('/');
 		
 		const actionType = core.getInput('type');
 		const body = core.getInput('body');
