@@ -73,18 +73,13 @@ async function run() {
 
 	async function findComment() {
 		
-		if ( ! issueNumber ) {
-			core.setFailed( "Issue number is missing.");
-			return;
-		}
-
 		if ( ! body ) {
 			core.setFailed("Comment body is missing.");
 			return;
 		}
 		
-		// const { data: comment } = 
 		let found_comment = false;
+		
 		for await ( const { data: comments } of
 			octokit.paginate.iterator(
 				octokit.rest.issues.listComments,
