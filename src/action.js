@@ -9,43 +9,6 @@ async function run() {
 	const token = core.getInput( "token" );
 	const octokit = github.getOctokit( token );
 
-	async function updateComment() {
-		
-		if ( ! commentId ) {
-			core.setFailed( "Commentd ID is missing.");
-			return;
-		}
-
-		if ( ! body ) {
-			core.setFailed("Comment body is missing.");
-			return;
-		}
-		
-		let newComment = body;
-
-		if ( "append" === actionType ) {
-			// Get an existing comment body.
-			const { data: comment } = await octokit.rest.issues.getComment({
-				owner: owner,
-				repo: repo,
-				comment_id: commentId,
-			});
-			
-			newComment = comment.body + "\n" + body;
-		  }
-
-		await octokit.rest.issues.updateComment({
-			owner: owner,
-			repo: repo,
-			comment_id: commentId,
-			body: newComment,
-		});
-		
-		core.info( `Comment is modified. Comment ID: '${commentId}'.`);
-		
-		core.setOutput( "comment_id", commentId );
-	}
-
 	async function createComment() {
 		
 		if ( ! issueNumber ) {
@@ -71,13 +34,52 @@ async function run() {
 		core.setOutput( "comment_id", comment.id );
 	}
 
+	async function updateComment() {
+		
+		if ( ! commentId ) {
+			core.setFailed( "Commentd ID is missing.");
+			return;
+		}
+
+		if ( ! body ) {
+			core.setFailed("Comment body is missing.");
+			return;
+		}
+		
+		let newComment = body;
+
+		if ( "append" === actionType ) {
+			// Get an existing comment body.
+			const { data: comment } = await octokit.rest.issues.getComment({
+				owner: owner,
+				repo: repo,
+				comment_id: commentId,
+			});
+			
+			newComment = comment.body + "\n" + body;
+		  }
+
+		const response = await octokit.rest.issues.updateComment({
+			owner: owner,
+			repo: repo,
+			comment_id: commentId,
+			body: newComment,
+		});
+		
+		core.info( `Update response: '${inspect(response)}`);
+
+		core.info( `Comment is modified. Comment ID: '${commentId}'.`);
+		
+		core.setOutput( "comment_id", commentId );
+	}
+
 	async function findComment() {
 		
 		if ( ! issueNumber ) {
 			core.setFailed( "Issue number is missing.");
 			return;
 		}
-		
+
 		if ( ! body ) {
 			core.setFailed("Comment body is missing.");
 			return;
@@ -118,6 +120,26 @@ async function run() {
 		}
 	}
 
+	async function deleteComment() {
+		
+		if ( ! commentId ) {
+			core.setFailed( "Commentd ID is missing.");
+			return;
+		}
+		
+		const response = await octokit.rest.issues.deleteComment({
+			owner: owner,
+			repo: repo,
+			comment_id: commentId,
+		});
+		
+		core.info( `Delete response: '${inspect(response)}`);
+		core.info( `Delete a comment. Comment ID: '${commentId}`);
+		
+		core.setOutput( "comment_id", commentId );
+		core.setOutput( "comment_body", '' );
+	}
+
 	try {
 		
 		const repository = core.getInput('repository');
@@ -139,6 +161,9 @@ async function run() {
 				break;
 			case 'find':
 				findComment();
+				break;
+			case 'delete':
+				deleteComment();
 				break;
 			default:
 				break;

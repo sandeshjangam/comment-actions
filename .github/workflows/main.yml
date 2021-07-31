@@ -9,12 +9,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
-      # - uses: ./
-      #   id: delete_comment
-      #   with:
-      #     type: "create"
-      #     body: "TO check the delete action"
-      #     number: ${{ github.event.pull_request.number }}
+      - uses: ./
+        id: delete_comment
+        with:
+          type: "create"
+          body: "To check the delete action"
+          number: ${{ github.event.pull_request.number }}
 
       - uses: ./
         id: new_comment
@@ -41,3 +41,8 @@ jobs:
           type: "append"
           body: "Append: Add new body at the end of the comment."
           comment_id: ${{ steps.new_comment.outputs.comment_id }}
+
+      - uses: ./
+        with:
+          type: "delete"
+          comment_id: ${{ steps.delete_comment.outputs.comment_id }}
