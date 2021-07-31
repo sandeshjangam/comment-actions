@@ -6287,26 +6287,33 @@ async function run() {
 
 	let actionType, body, issueNumber, owner, repo;
 
-	// function create_comment() {
+	const token = core.getInput( "token" );
+	const octokit = github.getOctokit( token );
+
+	async function createComment() {
 		
-	// 	if (inputs.issueNumber) {
-	// 		// Create a comment
-	// 		if (!inputs.body) {
-	// 			core.setFailed("Missing comment 'body'.");
-	// 			return;
-	// 		}
-	// 		const { data: comment } = await octokit.rest.issues.createComment({
-	// 			owner: repo[0],
-	// 			repo: repo[1],
-	// 			issue_number: inputs.issueNumber,
-	// 			body: inputs.body,
-	// 		});
-	// 		core.info(
-	// 			`Created comment id '${comment.id}' on issue '${inputs.issueNumber}'.`
-	// 		);
-	// 		core.setOutput("comment-id", comment.id);
-	// 	}
-	// }
+		if ( ! issueNumber ) {
+			core.setFailed( "Issue number is missing.");
+			return;
+		}
+
+		if ( ! body ) {
+			core.setFailed("Comment body is missing.");
+			return;
+		}
+		
+		const { data: comment } = await octokit.rest.issues.createComment({
+			owner: owner,
+			repo: repo,
+			issue_number: issueNumber,
+			body: body,
+		});
+		
+		core.info( `Created a comment on issue number: '${issueNumber}'.` );
+		core.info( `Comment ID: '${comment.id}'.`);
+		
+		core.setOutput("comment-id", comment.id);
+	}
 
 	try {
 		
@@ -6318,9 +6325,15 @@ async function run() {
 		issueNumber = core.getInput('number');
 		[owner, repo] = repository ? repository.split('/') : process.env.GITHUB_REPOSITORY.split('/');
 		
-
-		console.log('Hello, world!');
-		console.log(`Environment : ${inspect(process.env)}`);
+		switch ( actionType ) {
+			case 'create':
+				createComment();
+				break;
+			default:
+				break;
+		}
+		// console.log('Hello, world!');
+		// console.log(`Environment : ${inspect(process.env)}`);
 		console.log(`Repository : ${repository}`);
 		console.log(`Owner : ${owner}`);
 		console.log(`Repo : ${repo}`);
