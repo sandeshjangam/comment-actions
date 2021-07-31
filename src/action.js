@@ -179,17 +179,17 @@ async function run() {
 
 		switch ( actionType ) {
 			case 'create':
-				out_vars = createComment();
+				out_vars = await createComment();
 				break;
 			case 'update':
 			case 'append':
-				out_vars = updateComment();
+				out_vars = await updateComment();
 				break;
 			case 'find':
-				out_vars = findComment();
+				out_vars = await findComment();
 				break;
 			case 'delete':
-				out_vars = deleteComment();
+				out_vars = await deleteComment();
 				break;
 			default:
 				break;
