@@ -6309,10 +6309,14 @@ async function run() {
 			body: body,
 		});
 		
-		core.info( `Created a comment on issue number: '${issueNumber}'.` );
-		core.info( `Comment ID: '${comment.id}'.`);
+		core.info( `Created a comment on issue number: ${issueNumber}` );
+		core.info( `Comment ID: ${comment.id}`);
 		
-		core.setOutput( "comment_id", comment.id );
+		// core.setOutput( "comment_id", comment.id );
+		return {
+			"comment_id": comment.id,
+			"comment_body": comment.body
+		};
 	}
 
 	async function updateComment() {
@@ -6340,18 +6344,23 @@ async function run() {
 			newComment = comment.body + "\n" + body;
 		  }
 
-		const response = await octokit.rest.issues.updateComment({
+		  const { data: comment } = await octokit.rest.issues.updateComment({
 			owner: owner,
 			repo: repo,
 			comment_id: commentId,
 			body: newComment,
 		});
 		
-		core.info( `Update response: '${inspect(response)}`);
+		// core.info( `Update response: ${inspect(response)}`);
 
-		core.info( `Comment is modified. Comment ID: '${commentId}'.`);
+		core.info( `Comment is modified. Comment ID: ${comment.id}`);
 		
-		core.setOutput( "comment_id", commentId );
+		// core.setOutput( "comment_id", commentId );
+
+		return {
+			"comment_id": comment.id,
+			"comment_body": comment.body
+		};
 	}
 
 	async function findComment() {
@@ -6394,11 +6403,21 @@ async function run() {
 			core.info( `Comment found for a body: '${body}'.` );
 			core.info( `Comment ID: '${found_comment.id}'.`);
 			
-			core.setOutput('comment_id', found_comment.id );
-      		core.setOutput( 'comment_body', found_comment.body );
-		}else{
-			core.info( `Comment not found.`);
+			// core.setOutput('comment_id', found_comment.id );
+      		// core.setOutput( 'comment_body', found_comment.body );
+
+			return {
+				"comment_id": found_comment.id,
+				"comment_body": found_comment.body
+			};
 		}
+		
+		core.info( `Comment not found.`);
+
+		return {
+			"comment_id": '',
+			"comment_body": ''
+		};
 	}
 
 	async function deleteComment() {
@@ -6414,11 +6433,16 @@ async function run() {
 			comment_id: commentId,
 		});
 		
-		core.info( `Delete response: '${inspect(response)}`);
-		core.info( `Delete a comment. Comment ID: '${commentId}`);
+		core.info( `Delete response: ${inspect(response)}`);
+		core.info( `Delete a comment. Comment ID: ${commentId}`);
 		
-		core.setOutput( "comment_id", commentId );
-		core.setOutput( "comment_body", '' );
+		// core.setOutput( "comment_id", commentId );
+		// core.setOutput( "comment_body", '' );
+
+		return {
+			"comment_id": commentId,
+			"comment_body": ''
+		};
 	}
 
 	try {
@@ -6432,31 +6456,39 @@ async function run() {
 		issueNumber = core.getInput('number');
 		commentId = core.getInput('comment_id');
 		
+		let out_vars = { "comment_id": '', "comment_body": '' };
+
 		switch ( actionType ) {
 			case 'create':
-				createComment();
+				out_vars = createComment();
 				break;
 			case 'update':
 			case 'append':
-				updateComment();
+				out_vars = updateComment();
 				break;
 			case 'find':
-				findComment();
+				out_vars = findComment();
 				break;
 			case 'delete':
-				deleteComment();
+				out_vars = deleteComment();
 				break;
 			default:
 				break;
 		}
+
+		core.setOutput( "comment_id", out_vars.comment_id );
+		core.setOutput( "comment_body", out_vars.comment_body );
+
+		console.log( `comment_id : ${out_vars.comment_id}` );
+		console.log( `comment_body : ${out_vars.comment_body}` );
 		// console.log('Hello, world!');
 		// console.log(`Environment : ${inspect(process.env)}`);
-		console.log(`Repository : ${repository}`);
-		console.log(`Owner : ${owner}`);
-		console.log(`Repo : ${repo}`);
-		console.log(`Action type is : ${actionType}`);
-		console.log(`Issue number : ${issueNumber}`);
-		console.log(`Body : ${body}`);
+		// console.log(`Repository : ${repository}`);
+		// console.log(`Owner : ${owner}`);
+		// console.log(`Repo : ${repo}`);
+		// console.log(`Action type is : ${actionType}`);
+		// console.log(`Issue number : ${issueNumber}`);
+		// console.log(`Body : ${body}`);
 		
 		
 	} catch (error) {
