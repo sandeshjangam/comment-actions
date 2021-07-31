@@ -28,6 +28,7 @@ jobs:
         with:
           type: "find"
           body: "Test comment on PR"
+          number: ${{ github.event.pull_request.number }}
 
       - uses: ./
         with:
