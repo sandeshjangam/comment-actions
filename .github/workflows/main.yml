@@ -20,3 +20,9 @@ jobs:
           type: "update"
           body: "Edit: The test comment is modified"
           comment_id: 890309730
+
+      - uses: ./
+        with:
+          type: "append"
+          body: "Append: Add new body at the end of the comment."
+          comment_id: 890309730

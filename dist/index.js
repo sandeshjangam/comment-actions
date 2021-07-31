@@ -6290,7 +6290,7 @@ async function run() {
 	const token = core.getInput( "token" );
 	const octokit = github.getOctokit( token );
 
-	async function updateComment( replace = true ) {
+	async function updateComment() {
 		
 		if ( ! commentId ) {
 			core.setFailed( "Commentd ID is missing.");
@@ -6302,11 +6302,24 @@ async function run() {
 			return;
 		}
 		
+		let newComment = body;
+
+		if ( "append" === actionType ) {
+			// Get an existing comment body.
+			const { data: comment } = await octokit.rest.issues.getComment({
+				owner: owner,
+				repo: repo,
+				comment_id: commentId,
+			});
+			
+			newComment = comment.body + "\n" + body;
+		  }
+
 		await octokit.rest.issues.updateComment({
 			owner: owner,
 			repo: repo,
 			comment_id: commentId,
-			body: body,
+			body: newComment,
 		});
 		
 		core.info( `Comment is modified. Comment ID: '${commentId}'.`);
@@ -6355,7 +6368,8 @@ async function run() {
 				createComment();
 				break;
 			case 'update':
-				updateComment( true );
+			case 'append':
+				updateComment();
 				break;
 			default:
 				break;

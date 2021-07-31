@@ -10,7 +10,7 @@ inputs:
     default: ${{ github.repository }}
     required: false
   type:
-    description: create|update|delete|find
+    description: create|update|append|delete|find
     required: true
   number:
     description: 'The number of the issue or pull request'
@@ -19,7 +19,7 @@ inputs:
     description: 'The comment body'
     # default: 'The comment body'
     required: false
-  # Update comment input
+  # Update/Append comment input
   comment_id:
     description: 'Comment ID. Required to update or delete the comment'
     required: false
