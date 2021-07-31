@@ -9,20 +9,34 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
+      # - uses: ./
+      #   id: delete_comment
+      #   with:
+      #     type: "create"
+      #     body: "TO check the delete action"
+      #     number: ${{ github.event.pull_request.number }}
+
       - uses: ./
+        id: new_comment
         with:
           type: "create"
           body: "Test comment on PR"
           number: ${{ github.event.pull_request.number }}
+      
+      - uses: ./
+        id: find_comment
+        with:
+          type: "find"
+          body: "Test comment on PR"
 
       - uses: ./
         with:
           type: "update"
           body: "Edit: The test comment is modified"
-          comment_id: 890309730
+          comment_id: ${{ steps.new_comment.outputs.comment_id }}
 
       - uses: ./
         with:
           type: "append"
           body: "Append: Add new body at the end of the comment."
-          comment_id: 890309730
+          comment_id: ${{ steps.new_comment.outputs.comment_id }}

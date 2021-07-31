@@ -6352,6 +6352,53 @@ async function run() {
 		core.setOutput( "comment_id", comment.id );
 	}
 
+	async function findComment() {
+		
+		if ( ! issueNumber ) {
+			core.setFailed( "Issue number is missing.");
+			return;
+		}
+
+		if ( ! body ) {
+			core.setFailed("Comment body is missing.");
+			return;
+		}
+		
+		// const { data: comment } = 
+		let found_comment = false;
+		for await ( const { data: comments } of
+			octokit.paginate.iterator(
+				octokit.rest.issues.listComments,
+				{
+					owner: owner,
+					repo: repo,
+					issue_number: issueNumber,
+				}
+			)
+		) {
+			// Search a comment which included user comment.
+			const comment = comments.find(
+				comment => comment.body.includes( body )
+			)
+
+			// If a comment found, return.
+			if ( comment ) {
+				found_comment = comment;
+				break;
+			}
+		}
+
+		if ( found_comment ) {
+			core.info( `Comment found for a body: '${body}'.` );
+			core.info( `Comment ID: '${comment.id}'.`);
+			
+			core.setOutput('comment_id', comment.id );
+      		core.setOutput( 'comment_body', comment.body );
+		}else{
+			core.info( `Comment not found.`);
+		}
+	}
+
 	try {
 		
 		const repository = core.getInput('repository');
@@ -6370,6 +6417,9 @@ async function run() {
 			case 'update':
 			case 'append':
 				updateComment();
+				break;
+			case 'find':
+				findComment();
 				break;
 			default:
 				break;
