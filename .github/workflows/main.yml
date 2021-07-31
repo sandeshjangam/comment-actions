@@ -11,3 +11,4 @@ jobs:
       - uses: ./
         with:
           type: "create"
+          body: "Test comment on PR"

@@ -10,7 +10,7 @@ inputs:
     required: true
   body:
     description: 'The comment body'
-    default: 'The comment body'
+    # default: 'The comment body'
     required: false
   # Edit comment input
   # Delete comment input
