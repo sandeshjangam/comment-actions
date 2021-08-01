@@ -161,7 +161,7 @@ async function run() {
 			comment_id: commentId,
 		} );
 
-		core.info( `Delete response: ${inspect( response )}` );
+		core.debug( `Delete response: ${inspect( response )}` );
 		core.info( `Deleted a comment. Comment ID: ${commentId}` );
 
 		return {

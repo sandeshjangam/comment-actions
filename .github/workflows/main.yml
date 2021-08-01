@@ -1,10 +1,10 @@
-name: A workflow for my Hello World file
+name: A test workflow to test the comment actions.
 on:
   pull_request:
     types: [opened,synchronize]
 jobs:
   build:
-    name: Hello world action
+    name: Smart Comment Actions
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
