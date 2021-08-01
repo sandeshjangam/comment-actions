@@ -27,27 +27,14 @@ jobs:
           fi
 
       - uses: ./
-        id: delete_comment
-        with:
-          type: "create"
-          body: "To check the delete action"
-          number: ${{ steps.get_issue_number.outputs.issue_number }}
-
-      - uses: ./
         id: new_comment
         with:
           type: "create"
           body: "Test comment on PR"
           number: ${{ steps.get_issue_number.outputs.issue_number }}
-      
-      - uses: ./
-        id: find_comment
-        with:
-          type: "find"
-          search_term: "Test comment on PR"
-          number: ${{ steps.get_issue_number.outputs.issue_number }}
 
       - uses: ./
+        id: update_comment
         with:
           type: "update"
           body: "Edit: The test comment is modified"
@@ -60,6 +47,30 @@ jobs:
           comment_id: ${{ steps.new_comment.outputs.comment_id }}
 
       - uses: ./
+        id: create_delete_comment
+        with:
+          type: "create"
+          body: "To check the delete action"
+          number: ${{ steps.get_issue_number.outputs.issue_number }}
+
+      - uses: ./
+        id: find_comment
+        with:
+          type: "find"
+          search_term: "To check the delete action"
+          number: ${{ steps.get_issue_number.outputs.issue_number }}
+
+      - uses: ./
+        id: delete_comment
+        if: ${{ steps.find_comment.outputs.comment_id != '' }}
         with:
           type: "delete"
-          comment_id: ${{ steps.delete_comment.outputs.comment_id }}
+          comment_id: ${{ steps.find_comment.outputs.comment_id }}
+
+      - name: Verify Create and Update tests
+        if: ${{ steps.new_comment.outputs.comment_id == steps.update_comment.outputs.comment_id }}
+        run: echo "Create and Update tests are verified"
+      
+      - name: Verify Find and Delete tests
+        if: ${{ steps.create_delete_comment.outputs.comment_id == steps.delete_comment.outputs.comment_id }}
+        run: echo "Create, Find and Delete tests are verified"
