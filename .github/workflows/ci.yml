@@ -25,7 +25,6 @@ jobs:
           else \
             echo "::set-output name=issue_number::3"; \
           fi
-          echo ${{ toJSON(github.event) }}
 
       - uses: ./
         id: delete_comment
