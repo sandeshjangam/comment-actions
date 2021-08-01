@@ -6316,7 +6316,6 @@ async function run() {
 		core.info( `Created a comment on issue number: ${issueNumber}` );
 		core.info( `Comment ID: ${comment.id}` );
 
-		// core.setOutput( "comment_id", comment.id );
 		return {
 			comment_id: comment.id,
 			comment_body: comment.body,
@@ -6359,11 +6358,7 @@ async function run() {
 			body: newComment,
 		} );
 
-		// core.info( `Update response: ${inspect(response)}`);
-
 		core.info( `Comment is modified. Comment ID: ${comment.id}` );
-
-		// core.setOutput( "comment_id", commentId );
 
 		return {
 			comment_id: comment.id,
@@ -6450,9 +6445,6 @@ async function run() {
 		core.info( `Delete response: ${inspect( response )}` );
 		core.info( `Deleted a comment. Comment ID: ${commentId}` );
 
-		// core.setOutput( "comment_id", commentId );
-		// core.setOutput( "comment_body", '' );
-
 		return {
 			comment_id: commentId,
 			comment_body: '',
@@ -6495,14 +6487,10 @@ async function run() {
 		core.setOutput( 'comment_id', outVars.comment_id );
 		core.setOutput( 'comment_body', outVars.comment_body );
 
-		// console.log('Hello, world!');
 		// console.log(`Environment : ${inspect(process.env)}`);
 		// console.log(`Repository : ${repository}`);
 		// console.log(`Owner : ${owner}`);
 		// console.log(`Repo : ${repo}`);
-		// console.log(`Action type is : ${actionType}`);
-		// console.log(`Issue number : ${issueNumber}`);
-		// console.log(`Body : ${body}`);
 	} catch ( error ) {
 		core.setFailed( error.message );
 	}
