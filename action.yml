@@ -1,27 +1,41 @@
 name: 'Smart Comment Actions'
-description: 'Create, edit, delete or find pull request or issue comment'
+description: 'Create, update, append, delete or find pull request or issue comment'
 inputs:
   token:
-    description: 'GitHub toke'
+    description: 'GitHub token'
     default: ${{ github.token }}
     required: false
+  repository:
+    description: 'The GitHub repository'
+    default: ${{ github.repository }}
+    required: false
   type:
-    description: create|edit|delete|find
+    description: create|update|append|delete|find
     required: true
+  number:
+    description: 'The number of the issue or pull request'
+    required: false
   body:
     description: 'The comment body'
-    default: 'The comment body'
     required: false
-  # Edit comment input
+  # Update/Append comment input
   # Delete comment input
+  comment_id:
+    description: 'Comment ID. Required to update or delete the comment'
+    required: false
   # Find comment input
+  search_term:
+    description: 'Search term, which is included in the comment body.'
+    required: false
 
 outputs:
-  comment-id:
+  comment_id:
     description: 'The id of the new comment'
+  comment_body:
+    description: 'The body of the new comment'
 
 runs:
-  using: 'node14'
+  using: 'node12'
   main: 'dist/index.js'
   # main: 'index.js'
 

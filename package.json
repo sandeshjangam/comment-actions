@@ -1,10 +1,11 @@
 {
   "name": "smart-comment-actions",
   "version": "1.0.0",
-  "description": "",
+  "description": "Create, update, append, delete or find pull request or issue comment",
   "main": "index.js",
   "scripts": {
     "build": "ncc build src/action.js -o dist",
+    "lint": "eslint src/**/*.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,6 +24,9 @@
     "@actions/github": "^5.0.0"
   },
   "devDependencies": {
-    "@vercel/ncc": "^0.29.0"
+    "@vercel/ncc": "^0.29.0",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.23.4"
   }
 }
