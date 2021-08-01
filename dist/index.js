@@ -6284,8 +6284,10 @@ const github = __nccwpck_require__( 438 );
 const { inspect } = __nccwpck_require__( 669 );
 
 async function run() {
-	let owner; let repo; let actionType; let body; let issueNumber; let
-		commentId;
+	let owner; let repo;
+	let actionType; let body;
+	let issueNumber; let commentId;
+	let searchTerm;
 
 	const token = core.getInput( 'token' );
 	const octokit = github.getOctokit( token );
@@ -6377,8 +6379,8 @@ async function run() {
 			return outVars;
 		}
 
-		if ( !body ) {
-			core.setFailed( 'Comment body is missing.' );
+		if ( !searchTerm ) {
+			core.setFailed( 'Search term is missing.' );
 			return outVars;
 		}
 
@@ -6397,7 +6399,7 @@ async function run() {
 			// Search a comment which included user comment.
 			const comment = listComments.find(
 				// eslint-disable-next-line no-loop-func
-				( listComment ) => listComment.body.includes( body ),
+				( listComment ) => listComment.body.includes( searchTerm ),
 			);
 
 			// If a comment found, return.
@@ -6408,7 +6410,7 @@ async function run() {
 		}
 
 		if ( foundComment ) {
-			core.info( `Comment found for a body: '${body}'.` );
+			core.info( `Comment found for a search term: '${searchTerm}'.` );
 			core.info( `Comment ID: '${foundComment.id}'.` );
 
 			return {
@@ -6460,6 +6462,7 @@ async function run() {
 		body = core.getInput( 'body' );
 		issueNumber = core.getInput( 'number' );
 		commentId = core.getInput( 'comment_id' );
+		searchTerm = core.getInput( 'search_term' );
 
 		let outVars = { comment_id: '', comment_body: '' };
 

@@ -1,5 +1,5 @@
 name: 'Smart Comment Actions'
-description: 'Create, edit, delete or find pull request or issue comment'
+description: 'Create, update, append, delete or find pull request or issue comment'
 inputs:
   token:
     description: 'GitHub token'
@@ -17,19 +17,22 @@ inputs:
     required: false
   body:
     description: 'The comment body'
-    # default: 'The comment body'
     required: false
   # Update/Append comment input
+  # Delete comment input
   comment_id:
     description: 'Comment ID. Required to update or delete the comment'
     required: false
-  
-  # Delete comment input
   # Find comment input
+  search_term:
+    description: 'Search term, which is included in the comment body.'
+    required: false
 
 outputs:
   comment_id:
     description: 'The id of the new comment'
+  comment_body:
+    description: 'The body of the new comment'
 
 runs:
   using: 'node12'

@@ -1,34 +1,52 @@
-name: A test workflow to test the comment actions.
+name: CI
 on:
   pull_request:
     types: [opened,synchronize]
+    branches: [main]
+    paths-ignore:
+      - 'README.md'
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'README.md'
 jobs:
   build:
     name: Smart Comment Actions
     runs-on: ubuntu-latest
+    outputs:
+      issue_number: ${{ steps.get_issue_number.outputs.issue_number }}
     steps:
       - uses: actions/checkout@v2
       
+      - id: get_issue_number
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then \
+            echo "::set-output name=issue_number::${{ github.event.pull_request.number }}"; \
+          else \
+            echo "::set-output name=issue_number::3"; \
+          fi
+          echo ${{ toJSON(github.event) }}
+
       - uses: ./
         id: delete_comment
         with:
           type: "create"
           body: "To check the delete action"
-          number: ${{ github.event.pull_request.number }}
+          number: ${{ steps.get_issue_number.outputs.issue_number }}
 
       - uses: ./
         id: new_comment
         with:
           type: "create"
           body: "Test comment on PR"
-          number: ${{ github.event.pull_request.number }}
+          number: ${{ steps.get_issue_number.outputs.issue_number }}
       
       - uses: ./
         id: find_comment
         with:
           type: "find"
-          body: "Test comment on PR"
-          number: ${{ github.event.pull_request.number }}
+          search_term: "Test comment on PR"
+          number: ${{ steps.get_issue_number.outputs.issue_number }}
 
       - uses: ./
         with:

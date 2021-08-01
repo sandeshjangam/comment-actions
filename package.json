@@ -1,7 +1,7 @@
 {
   "name": "smart-comment-actions",
   "version": "1.0.0",
-  "description": "",
+  "description": "Create, update, append, delete or find pull request or issue comment",
   "main": "index.js",
   "scripts": {
     "build": "ncc build src/action.js -o dist",
