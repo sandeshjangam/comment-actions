@@ -12,11 +12,11 @@ inputs:
   type:
     description: create|update|append|delete|find
     required: true
-  number:
-    description: 'The number of the issue or pull request'
-    required: false
   body:
     description: 'The comment body'
+    required: false
+  number:
+    description: 'The number of the issue or pull request'
     required: false
   # Update/Append comment input
   # Delete comment input
