@@ -6279,225 +6279,225 @@ module.exports = require("zlib");
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-const core = __nccwpck_require__(186);
-const github = __nccwpck_require__(438);
-const { inspect } = __nccwpck_require__(669);
+const core = __nccwpck_require__( 186 );
+const github = __nccwpck_require__( 438 );
+const { inspect } = __nccwpck_require__( 669 );
 
 async function run() {
+	let owner; let repo; let actionType; let body; let issueNumber; let
+		commentId;
 
-	let owner, repo, actionType, body, issueNumber, commentId;
-
-	const token = core.getInput( "token" );
+	const token = core.getInput( 'token' );
 	const octokit = github.getOctokit( token );
 
 	async function createComment() {
-		
-		if ( ! issueNumber ) {
-			core.setFailed( "Issue number is missing.");
-			return;
+		const outVars = {
+			comment_id: '',
+			comment_body: '',
+		};
+
+		if ( !issueNumber ) {
+			core.setFailed( 'Issue number is missing.' );
+			return outVars;
 		}
 
-		if ( ! body ) {
-			core.setFailed("Comment body is missing.");
-			return;
+		if ( !body ) {
+			core.setFailed( 'Comment body is missing.' );
+			return outVars;
 		}
-		
-		const { data: comment } = await octokit.rest.issues.createComment({
-			owner: owner,
-			repo: repo,
+
+		const { data: comment } = await octokit.rest.issues.createComment( {
+			owner,
+			repo,
 			issue_number: issueNumber,
-			body: body,
-		});
-		
+			body,
+		} );
+
 		core.info( `Created a comment on issue number: ${issueNumber}` );
-		core.info( `Comment ID: ${comment.id}`);
-		
-		// core.setOutput( "comment_id", comment.id );
+		core.info( `Comment ID: ${comment.id}` );
+
 		return {
-			"comment_id": comment.id,
-			"comment_body": comment.body
+			comment_id: comment.id,
+			comment_body: comment.body,
 		};
 	}
 
 	async function updateComment() {
-		
-		if ( ! commentId ) {
-			core.setFailed( "Commentd ID is missing.");
-			return;
+		const outVars = {
+			comment_id: '',
+			comment_body: '',
+		};
+
+		if ( !commentId ) {
+			core.setFailed( 'Commentd ID is missing.' );
+			return outVars;
 		}
 
-		if ( ! body ) {
-			core.setFailed("Comment body is missing.");
-			return;
+		if ( !body ) {
+			core.setFailed( 'Comment body is missing.' );
+			return outVars;
 		}
-		
+
 		let newComment = body;
 
-		if ( "append" === actionType ) {
+		if ( actionType === 'append' ) {
 			// Get an existing comment body.
-			const { data: comment } = await octokit.rest.issues.getComment({
-				owner: owner,
-				repo: repo,
+			const { data: comment } = await octokit.rest.issues.getComment( {
+				owner,
+				repo,
 				comment_id: commentId,
-			});
-			
-			newComment = comment.body + "\n" + body;
-		  }
+			} );
 
-		  const { data: comment } = await octokit.rest.issues.updateComment({
-			owner: owner,
-			repo: repo,
+			newComment = `${comment.body}\n${body}`;
+		}
+
+		const { data: comment } = await octokit.rest.issues.updateComment( {
+			owner,
+			repo,
 			comment_id: commentId,
 			body: newComment,
-		});
-		
-		// core.info( `Update response: ${inspect(response)}`);
+		} );
 
-		core.info( `Comment is modified. Comment ID: ${comment.id}`);
-		
-		// core.setOutput( "comment_id", commentId );
+		core.info( `Comment is modified. Comment ID: ${comment.id}` );
 
 		return {
-			"comment_id": comment.id,
-			"comment_body": comment.body
+			comment_id: comment.id,
+			comment_body: comment.body,
 		};
 	}
 
 	async function findComment() {
-		
-		if ( ! issueNumber ) {
-			core.setFailed( "Issue number is missing.");
-			return;
+		const outVars = {
+			comment_id: '',
+			comment_body: '',
+		};
+
+		if ( !issueNumber ) {
+			core.setFailed( 'Issue number is missing.' );
+			return outVars;
 		}
 
-		if ( ! body ) {
-			core.setFailed("Comment body is missing.");
-			return;
+		if ( !body ) {
+			core.setFailed( 'Comment body is missing.' );
+			return outVars;
 		}
-		
-		let found_comment = false;
 
-		for await ( const { data: comments } of
+		let foundComment = false;
+		// eslint-disable-next-line no-restricted-syntax
+		for await ( const { data: listComments } of
 			octokit.paginate.iterator(
 				octokit.rest.issues.listComments,
 				{
-					owner: owner,
-					repo: repo,
+					owner,
+					repo,
 					issue_number: issueNumber,
-				}
+				},
 			)
 		) {
 			// Search a comment which included user comment.
-			const comment = comments.find(
-				comment => comment.body.includes( body )
-			)
+			const comment = listComments.find(
+				// eslint-disable-next-line no-loop-func
+				( listComment ) => listComment.body.includes( body ),
+			);
 
 			// If a comment found, return.
 			if ( comment ) {
-				found_comment = comment;
+				foundComment = comment;
 				break;
 			}
 		}
 
-		if ( found_comment ) {
+		if ( foundComment ) {
 			core.info( `Comment found for a body: '${body}'.` );
-			core.info( `Comment ID: '${found_comment.id}'.`);
-			
-			// core.setOutput('comment_id', found_comment.id );
-      		// core.setOutput( 'comment_body', found_comment.body );
+			core.info( `Comment ID: '${foundComment.id}'.` );
 
 			return {
-				"comment_id": found_comment.id,
-				"comment_body": found_comment.body
+				comment_id: foundComment.id,
+				comment_body: foundComment.body,
 			};
 		}
-		
-		core.info( `Comment not found.`);
+
+		core.info( 'Comment not found.' );
 
 		return {
-			"comment_id": '',
-			"comment_body": ''
+			comment_id: '',
+			comment_body: '',
 		};
 	}
 
 	async function deleteComment() {
-		
-		if ( ! commentId ) {
-			core.setFailed( "Commentd ID is missing.");
-			return;
+		const outVars = {
+			comment_id: '',
+			comment_body: '',
+		};
+
+		if ( !commentId ) {
+			core.setFailed( 'Commentd ID is missing.' );
+			return outVars;
 		}
-		
-		const response = await octokit.rest.issues.deleteComment({
-			owner: owner,
-			repo: repo,
+
+		const response = await octokit.rest.issues.deleteComment( {
+			owner,
+			repo,
 			comment_id: commentId,
-		});
-		
-		core.info( `Delete response: ${inspect(response)}`);
-		core.info( `Delete a comment. Comment ID: ${commentId}`);
-		
-		// core.setOutput( "comment_id", commentId );
-		// core.setOutput( "comment_body", '' );
+		} );
+
+		core.debug( `Delete response: ${inspect( response )}` );
+		core.info( `Deleted a comment. Comment ID: ${commentId}` );
 
 		return {
-			"comment_id": commentId,
-			"comment_body": ''
+			comment_id: commentId,
+			comment_body: '',
 		};
 	}
 
 	try {
-		
-		const repository = core.getInput('repository');
-		[owner, repo] = repository ? repository.split('/') : process.env.GITHUB_REPOSITORY.split('/');
-		
+		const repository = core.getInput( 'repository' );
+		[owner, repo] = repository ? repository.split( '/' ) : process.env.GITHUB_REPOSITORY.split( '/' );
+
 		// Assign variables.
-		actionType = core.getInput('type');
-		body = core.getInput('body');
-		issueNumber = core.getInput('number');
-		commentId = core.getInput('comment_id');
-		
-		let out_vars = { "comment_id": '', "comment_body": '' };
+		actionType = core.getInput( 'type' );
+		body = core.getInput( 'body' );
+		issueNumber = core.getInput( 'number' );
+		commentId = core.getInput( 'comment_id' );
+
+		let outVars = { comment_id: '', comment_body: '' };
 
 		switch ( actionType ) {
-			case 'create':
-				out_vars = await createComment();
-				break;
-			case 'update':
-			case 'append':
-				out_vars = await updateComment();
-				break;
-			case 'find':
-				out_vars = await findComment();
-				break;
-			case 'delete':
-				out_vars = await deleteComment();
-				break;
-			default:
-				break;
+		case 'create':
+			outVars = await createComment();
+			break;
+		case 'update':
+		case 'append':
+			outVars = await updateComment();
+			break;
+		case 'find':
+			outVars = await findComment();
+			break;
+		case 'delete':
+			outVars = await deleteComment();
+			break;
+		default:
+			break;
 		}
 
-		core.setOutput( "comment_id", out_vars.comment_id );
-		core.setOutput( "comment_body", out_vars.comment_body );
+		core.info( `comment_id : ${outVars.comment_id}` );
+		core.info( `comment_body : ${outVars.comment_body}` );
 
-		console.log( `comment_id : ${out_vars.comment_id}` );
-		console.log( `comment_body : ${out_vars.comment_body}` );
-		// console.log('Hello, world!');
+		core.setOutput( 'comment_id', outVars.comment_id );
+		core.setOutput( 'comment_body', outVars.comment_body );
+
 		// console.log(`Environment : ${inspect(process.env)}`);
 		// console.log(`Repository : ${repository}`);
 		// console.log(`Owner : ${owner}`);
 		// console.log(`Repo : ${repo}`);
-		// console.log(`Action type is : ${actionType}`);
-		// console.log(`Issue number : ${issueNumber}`);
-		// console.log(`Body : ${body}`);
-		
-		
-	} catch (error) {
-		
+	} catch ( error ) {
 		core.setFailed( error.message );
 	}
 }
 
 run();
+
 })();
 
 module.exports = __webpack_exports__;
