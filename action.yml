@@ -24,6 +24,9 @@ inputs:
     description: 'Comment ID. Required to update or delete the comment'
     required: false
   # Find comment input
+  author:
+    description: 'GitHub user name of the comment author to find a comment .'
+    required: false
   search_term:
     description: 'Search term, which is included in the comment body.'
     required: false
