@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/sandeshjangam/comment-actions/workflows/CI/badge.svg)](https://github.com/sandeshjangam/comment-actions/actions?query=workflow%3ACI)
 
-A GitHub action to create, update, append, delete or find a comment on pull request or issue.
+A GitHub action to create, update, append, prepend, delete or find a comment on pull request or issue.
 
 ## Inputs
 
@@ -46,8 +46,10 @@ A GitHub action to create, update, append, delete or find a comment on pull requ
 | `repository`  | Owner and repository name. e.g. `sandeshjangam/comment-actions`              | `false`  | `${{ github.repository }}` |
 | `type`        | `find`                                                                       | `true`   | `N/A`                      |
 | `number`      | Number of the pull request or issue. Required with `find` type.              | `true`   | `N/A`                      |
-| `search_term` | Search in body. Required with `find` type.                                   | `true`   | `N/A`                      |
+| `search_term` | Search in body. Can use with conjunction of `author` arg.                    | `true`   | `N/A`                      |
+| `author`      | GitHub user name of the comment author.                                      | `false`  | `N/A`                      |
 
+Note - To find a comment you can use either search_term or author and search_term both.
 
 ## Outputs
 
@@ -80,6 +82,7 @@ jobs:
           type: "create"
           body: "Test comment on PR"
           number: ${{ github.event.pull_request.number }}
+          reactions: +1, hooray, heart, rocket
 ```
 
 ### Update Comment (It will replace a comment)
@@ -92,6 +95,7 @@ jobs:
           type: "update"
           body: "Edit: The test comment is modified"
           comment_id: 856978218
+          reactions: hooray, rocket
 ```
 
 ### Delete Comment

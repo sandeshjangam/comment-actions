@@ -176,13 +176,10 @@ async function run() {
 			// Search a comment which included user comment.
 			const comment = listComments.find(
 				// eslint-disable-next-line no-loop-func
-				( listComment ) => {
-					core.info( listComment.user.login );
-					return (
-						( searchTerm && listComment.body ? listComment.body.includes( searchTerm ) : true )
+				( listComment ) => (
+					( searchTerm && listComment.body ? listComment.body.includes( searchTerm ) : true )
 					&& ( author && listComment.user ? listComment.user.login === author : true )
-					);
-				},
+				),
 			);
 
 			// If a comment found, return.
