@@ -1,5 +1,5 @@
 name: 'Smart Comment Actions'
-description: 'Create, update, append, delete or find pull request or issue comment'
+description: 'Create, update, append, prepend, delete or find a pull request or issue comment'
 inputs:
   token:
     description: 'GitHub token'
@@ -44,7 +44,6 @@ outputs:
 runs:
   using: 'node12'
   main: 'dist/index.js'
-  # main: 'index.js'
 
 branding:
   icon: 'message-circle'  
