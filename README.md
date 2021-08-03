@@ -6,15 +6,47 @@ A GitHub action to create, update, append, delete or find a comment on pull requ
 
 ## Inputs
 
+### Create Comment
+
 |     NAME      |                          DESCRIPTION                                         | REQUIRED |          DEFAULT           |
 | ------------- | ---------------------------------------------------------------------------- | -------- | -------------------------- |
-| `token`       | A GitHub token.                                                              | `fasle`  | `${{ github.token }}`      |
+| `token`       | A GitHub token.                                                              | `false`  | `${{ github.token }}`      |
 | `repository`  | Owner and repository name. e.g. `sandeshjangam/comment-actions`              | `false`  | `${{ github.repository }}` |
-| `type`        | `create`, `update`, `append`, `delete` or `find`                             | `true`   | `N/A`                      |
-| `body`        | Comment body. Required with `create`, `update` and `append` type.            | `true`   | `N/A`                      |
-| `number`      | Number of the pull request or issue. Required with `create` and `find` type. | `false`  | `N/A`                      |
-| `comment_id`  | Comment id. Required with `update`, `append` and `delete` type.              | `false`  | `N/A`                      |
-| `search_term` | Search in body. Required with `find` type.                                   | `false`  | `N/A`                      |
+| `type`        | `create`                                                                     | `true`   | `N/A`                      |
+| `body`        | Comment body. Required with `create` type.                                   | `true`   | `N/A`                      |
+| `number`      | Number of the pull request or issue. Required with `create` and `find` type. | `true`   | `N/A`                      |
+| `reactions`   | Add comma separated list of reactions to react on the comment. `+1`, `-1`, `laugh`, `hooray`, `confused`, `heart`, `rocket`, `eyes` | `false` | `N/A` |
+
+### Update Comment
+
+|     NAME      |                          DESCRIPTION                                         | REQUIRED |          DEFAULT           |
+| ------------- | ---------------------------------------------------------------------------- | -------- | -------------------------- |
+| `token`       | A GitHub token.                                                              | `false`  | `${{ github.token }}`      |
+| `repository`  | Owner and repository name. e.g. `sandeshjangam/comment-actions`              | `false`  | `${{ github.repository }}` |
+| `type`        | `update`, `append` or `prepend`                                              | `true`   | `N/A`                      |
+| `body`        | Comment body. Required with `update`, `append` or `prepend`                  | `true`   | `N/A`                      |
+| `comment_id`  | Comment id. Required with `update`, `append` or `prepend`                    | `true`   | `N/A`                      |
+| `reactions`   | Add comma separated list of reactions to react on the comment. `+1`, `-1`, `laugh`, `hooray`, `confused`, `heart`, `rocket`, `eyes` | `false` | `N/A` |
+
+### Delete Comment
+
+|     NAME      |                          DESCRIPTION                                         | REQUIRED |          DEFAULT           |
+| ------------- | ---------------------------------------------------------------------------- | -------- | -------------------------- |
+| `token`       | A GitHub token.                                                              | `false`  | `${{ github.token }}`      |
+| `repository`  | Owner and repository name. e.g. `sandeshjangam/comment-actions`              | `false`  | `${{ github.repository }}` |
+| `type`        | `delete`                                                                     | `true`   | `N/A`                      |
+| `comment_id`  | Comment id. Required `delete` type.                                          | `true`   | `N/A`                      |
+
+
+### Find Comment
+
+|     NAME      |                          DESCRIPTION                                         | REQUIRED |          DEFAULT           |
+| ------------- | ---------------------------------------------------------------------------- | -------- | -------------------------- |
+| `token`       | A GitHub token.                                                              | `false`  | `${{ github.token }}`      |
+| `repository`  | Owner and repository name. e.g. `sandeshjangam/comment-actions`              | `false`  | `${{ github.repository }}` |
+| `type`        | `find`                                                                       | `true`   | `N/A`                      |
+| `number`      | Number of the pull request or issue. Required with `find` type.              | `true`  | `N/A`                      |
+| `search_term` | Search in body. Required with `find` type.                                   | `true`  | `N/A`                      |
 
 
 ## Outputs
