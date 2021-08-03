@@ -18,7 +18,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
-      - id: get_issue_number
+      - name: Set issue number
+        id: get_issue_number
         run: |
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then \
             echo "::set-output name=issue_number::${{ github.event.pull_request.number }}"; \
@@ -26,45 +27,60 @@ jobs:
             echo "::set-output name=issue_number::3"; \
           fi
 
-      - uses: ./
+      - name: Create a new comment
+        uses: ./
         id: new_comment
         with:
-          type: "create"
-          body: "Test comment on PR"
+          type: create
+          body: Test comment on PR
           number: ${{ steps.get_issue_number.outputs.issue_number }}
+          reactions: +1, -1, laugh, hooray, confused, heart, rocket, eyes
 
-      - uses: ./
+      - name: Update comment
+        uses: ./
         id: update_comment
         with:
-          type: "update"
+          type: update
           body: "Edit: The test comment is modified"
           comment_id: ${{ steps.new_comment.outputs.comment_id }}
 
-      - uses: ./
+      - name: Append to comment
+        uses: ./
         with:
-          type: "append"
-          body: "Append: Add new body at the end of the comment."
+          type: append
+          body: "Append: Add something at the end of the comment."
           comment_id: ${{ steps.new_comment.outputs.comment_id }}
 
-      - uses: ./
+      - name: Prepend to comment
+        uses: ./
+        with:
+          type: prepend
+          body: "Prepend: Add something at the start of the comment."
+          comment_id: ${{ steps.new_comment.outputs.comment_id }}
+
+      - name: Create delete comment
+        uses: ./
         id: create_delete_comment
         with:
-          type: "create"
-          body: "To check the delete action"
+          type: create
+          body: To check the delete action
           number: ${{ steps.get_issue_number.outputs.issue_number }}
 
-      - uses: ./
+      - name: Find comment
+        uses: ./
         id: find_comment
         with:
-          type: "find"
-          search_term: "To check the delete action"
+          type: find
+          author: github-actions[bot]
+          search_term: To check the delete action
           number: ${{ steps.get_issue_number.outputs.issue_number }}
 
-      - uses: ./
+      - name: Delete comment
+        uses: ./
         id: delete_comment
         if: ${{ steps.find_comment.outputs.comment_id != '' }}
         with:
-          type: "delete"
+          type: delete
           comment_id: ${{ steps.find_comment.outputs.comment_id }}
 
       - name: Verify Create and Update tests

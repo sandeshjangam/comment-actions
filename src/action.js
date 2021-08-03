@@ -6,10 +6,58 @@ async function run() {
 	let owner; let repo;
 	let actionType; let body;
 	let issueNumber; let commentId;
-	let searchTerm;
+	let searchTerm; let author;
+	let reactions;
+
+	const allowedReactions = [
+		'+1',
+		'-1',
+		'laugh',
+		'hooray',
+		'confused',
+		'heart',
+		'rocket',
+		'eyes',
+	];
 
 	const token = core.getInput( 'token' );
 	const octokit = github.getOctokit( token );
+
+	async function addReactions( newCommentId ) {
+		if ( !reactions ) {
+			return;
+		}
+
+		const reactionsSet = [
+			...new Set(
+				reactions
+					.replace( /\s/g, '' )
+					.split( ',' )
+					.filter( ( reaction ) => {
+						if ( !allowedReactions.includes( reaction ) ) {
+							core.warning( `Invalid reaction: '${reaction}` );
+							return false;
+						}
+						return true;
+					} ),
+			),
+		];
+
+		if ( !reactionsSet ) {
+			core.warning( `No valid reactions: '${reactions}` );
+			return;
+		}
+
+		reactionsSet.map( async ( reaction ) => {
+			await octokit.rest.reactions.createForIssueComment( {
+				owner,
+				repo,
+				comment_id: newCommentId,
+				content: reaction,
+			} );
+			core.info( `Reacted '${reaction}' on a comment.` );
+		} );
+	}
 
 	async function createComment() {
 		const outVars = {
@@ -18,12 +66,12 @@ async function run() {
 		};
 
 		if ( !issueNumber ) {
-			core.setFailed( 'Issue number is missing.' );
+			core.setFailed( 'Issue number is required.' );
 			return outVars;
 		}
 
 		if ( !body ) {
-			core.setFailed( 'Comment body is missing.' );
+			core.setFailed( 'Comment body is required.' );
 			return outVars;
 		}
 
@@ -36,6 +84,8 @@ async function run() {
 
 		core.info( `Created a comment on issue number: ${issueNumber}` );
 		core.info( `Comment ID: ${comment.id}` );
+
+		await addReactions( comment.id );
 
 		return {
 			comment_id: comment.id,
@@ -50,18 +100,18 @@ async function run() {
 		};
 
 		if ( !commentId ) {
-			core.setFailed( 'Commentd ID is missing.' );
+			core.setFailed( 'Comment ID is required.' );
 			return outVars;
 		}
 
 		if ( !body ) {
-			core.setFailed( 'Comment body is missing.' );
+			core.setFailed( 'Comment body is required.' );
 			return outVars;
 		}
 
 		let newComment = body;
 
-		if ( actionType === 'append' ) {
+		if ( actionType === 'append' || actionType === 'prepend' ) {
 			// Get an existing comment body.
 			const { data: comment } = await octokit.rest.issues.getComment( {
 				owner,
@@ -69,7 +119,13 @@ async function run() {
 				comment_id: commentId,
 			} );
 
-			newComment = `${comment.body}\n${body}`;
+			if ( actionType === 'append' ) {
+				newComment = `${comment.body}\n${body}`;
+			}
+
+			if ( actionType === 'prepend' ) {
+				newComment = `${body}\n${comment.body}`;
+			}
 		}
 
 		const { data: comment } = await octokit.rest.issues.updateComment( {
@@ -80,6 +136,8 @@ async function run() {
 		} );
 
 		core.info( `Comment is modified. Comment ID: ${comment.id}` );
+
+		await addReactions( comment.id );
 
 		return {
 			comment_id: comment.id,
@@ -94,12 +152,12 @@ async function run() {
 		};
 
 		if ( !issueNumber ) {
-			core.setFailed( 'Issue number is missing.' );
+			core.setFailed( 'Issue number is required.' );
 			return outVars;
 		}
 
-		if ( !searchTerm ) {
-			core.setFailed( 'Search term is missing.' );
+		if ( !searchTerm && !author ) {
+			core.setFailed( 'Either search term (search_term) or comment author (author) is required.' );
 			return outVars;
 		}
 
@@ -118,7 +176,10 @@ async function run() {
 			// Search a comment which included user comment.
 			const comment = listComments.find(
 				// eslint-disable-next-line no-loop-func
-				( listComment ) => listComment.body.includes( searchTerm ),
+				( listComment ) => (
+					( searchTerm && listComment.body ? listComment.body.includes( searchTerm ) : true )
+					&& ( author && listComment.user ? listComment.user.login === author : true )
+				),
 			);
 
 			// If a comment found, return.
@@ -153,7 +214,7 @@ async function run() {
 		};
 
 		if ( !commentId ) {
-			core.setFailed( 'Commentd ID is missing.' );
+			core.setFailed( 'Comment ID is required.' );
 			return outVars;
 		}
 
@@ -182,6 +243,8 @@ async function run() {
 		issueNumber = core.getInput( 'number' );
 		commentId = core.getInput( 'comment_id' );
 		searchTerm = core.getInput( 'search_term' );
+		author = core.getInput( 'author' );
+		reactions = core.getInput( 'reactions' );
 
 		let outVars = { comment_id: '', comment_body: '' };
 
@@ -191,6 +254,7 @@ async function run() {
 			break;
 		case 'update':
 		case 'append':
+		case 'prepend':
 			outVars = await updateComment();
 			break;
 		case 'find':
@@ -212,7 +276,8 @@ async function run() {
 		// console.log(`Environment : ${inspect(process.env)}`);
 		// console.log(`Repository : ${repository}`);
 		// console.log(`Owner : ${owner}`);
-		// console.log(`Repo : ${repo}`);
+		// console.log(`Reactions : ${reactions}`);
+		// console.log(`Reactions : ${typeof reactions}`);
 	} catch ( error ) {
 		core.setFailed( error.message );
 	}

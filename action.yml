@@ -10,7 +10,7 @@ inputs:
     default: ${{ github.repository }}
     required: false
   type:
-    description: create|update|append|delete|find
+    description: create|update|append|prepend|delete|find
     required: true
   body:
     description: 'The comment body'
@@ -24,8 +24,15 @@ inputs:
     description: 'Comment ID. Required to update or delete the comment'
     required: false
   # Find comment input
+  author:
+    description: 'GitHub user name of the comment author to find a comment .'
+    required: false
   search_term:
     description: 'Search term, which is included in the comment body.'
+    required: false
+  # Reactions
+  reactions:
+    description: 'Add comma separated list of reactions to react on the comment.'
     required: false
 
 outputs:
