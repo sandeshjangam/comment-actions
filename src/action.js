@@ -99,7 +99,7 @@ async function run() {
 		};
 
 		if ( !commentId ) {
-			core.setFailed( 'Commentd ID is missing.' );
+			core.setFailed( 'Comment ID is missing.' );
 			return outVars;
 		}
 
@@ -135,6 +135,8 @@ async function run() {
 		} );
 
 		core.info( `Comment is modified. Comment ID: ${comment.id}` );
+
+		await addReactions( comment.id );
 
 		return {
 			comment_id: comment.id,
@@ -208,7 +210,7 @@ async function run() {
 		};
 
 		if ( !commentId ) {
-			core.setFailed( 'Commentd ID is missing.' );
+			core.setFailed( 'Comment ID is missing.' );
 			return outVars;
 		}
 
