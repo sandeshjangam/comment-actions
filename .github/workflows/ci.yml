@@ -71,7 +71,7 @@ jobs:
         id: find_comment
         with:
           type: find
-          author: github-actions
+          author: github-actions[bot]
           search_term: Test comment on PR
           #search_term: To check the delete action
           number: ${{ steps.get_issue_number.outputs.issue_number }}
