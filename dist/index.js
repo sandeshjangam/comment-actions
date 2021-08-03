@@ -6287,7 +6287,8 @@ async function run() {
 	let owner; let repo;
 	let actionType; let body;
 	let issueNumber; let commentId;
-	let searchTerm; let reactions;
+	let searchTerm; let author;
+	let reactions;
 
 	const allowedReactions = [
 		'+1',
@@ -6346,12 +6347,12 @@ async function run() {
 		};
 
 		if ( !issueNumber ) {
-			core.setFailed( 'Issue number is missing.' );
+			core.setFailed( 'Issue number is required.' );
 			return outVars;
 		}
 
 		if ( !body ) {
-			core.setFailed( 'Comment body is missing.' );
+			core.setFailed( 'Comment body is required.' );
 			return outVars;
 		}
 
@@ -6380,12 +6381,12 @@ async function run() {
 		};
 
 		if ( !commentId ) {
-			core.setFailed( 'Comment ID is missing.' );
+			core.setFailed( 'Comment ID is required.' );
 			return outVars;
 		}
 
 		if ( !body ) {
-			core.setFailed( 'Comment body is missing.' );
+			core.setFailed( 'Comment body is required.' );
 			return outVars;
 		}
 
@@ -6432,12 +6433,12 @@ async function run() {
 		};
 
 		if ( !issueNumber ) {
-			core.setFailed( 'Issue number is missing.' );
+			core.setFailed( 'Issue number is required.' );
 			return outVars;
 		}
 
-		if ( !searchTerm ) {
-			core.setFailed( 'Search term is missing.' );
+		if ( !searchTerm && !author ) {
+			core.setFailed( 'Either search term (search_term) or comment author (author) is required.' );
 			return outVars;
 		}
 
@@ -6456,7 +6457,10 @@ async function run() {
 			// Search a comment which included user comment.
 			const comment = listComments.find(
 				// eslint-disable-next-line no-loop-func
-				( listComment ) => listComment.body.includes( searchTerm ),
+				( listComment ) => (
+					( searchTerm && listComment.body ? listComment.body.includes( searchTerm ) : true )
+					&& ( author && listComment.user ? listComment.user.login === author : true )
+				),
 			);
 
 			// If a comment found, return.
@@ -6491,7 +6495,7 @@ async function run() {
 		};
 
 		if ( !commentId ) {
-			core.setFailed( 'Comment ID is missing.' );
+			core.setFailed( 'Comment ID is required.' );
 			return outVars;
 		}
 
@@ -6520,6 +6524,7 @@ async function run() {
 		issueNumber = core.getInput( 'number' );
 		commentId = core.getInput( 'comment_id' );
 		searchTerm = core.getInput( 'search_term' );
+		author = core.getInput( 'author' );
 		reactions = core.getInput( 'reactions' );
 
 		let outVars = { comment_id: '', comment_body: '' };

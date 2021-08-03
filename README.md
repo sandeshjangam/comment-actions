@@ -45,8 +45,8 @@ A GitHub action to create, update, append, delete or find a comment on pull requ
 | `token`       | A GitHub token.                                                              | `false`  | `${{ github.token }}`      |
 | `repository`  | Owner and repository name. e.g. `sandeshjangam/comment-actions`              | `false`  | `${{ github.repository }}` |
 | `type`        | `find`                                                                       | `true`   | `N/A`                      |
-| `number`      | Number of the pull request or issue. Required with `find` type.              | `true`  | `N/A`                      |
-| `search_term` | Search in body. Required with `find` type.                                   | `true`  | `N/A`                      |
+| `number`      | Number of the pull request or issue. Required with `find` type.              | `true`   | `N/A`                      |
+| `search_term` | Search in body. Required with `find` type.                                   | `true`   | `N/A`                      |
 
 
 ## Outputs

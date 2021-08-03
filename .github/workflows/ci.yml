@@ -71,7 +71,9 @@ jobs:
         id: find_comment
         with:
           type: find
-          search_term: To check the delete action
+          author: github-actions
+          search_term: Test comment on PR
+          #search_term: To check the delete action
           number: ${{ steps.get_issue_number.outputs.issue_number }}
 
       - name: Delete comment
@@ -80,7 +82,8 @@ jobs:
         if: ${{ steps.find_comment.outputs.comment_id != '' }}
         with:
           type: delete
-          comment_id: ${{ steps.find_comment.outputs.comment_id }}
+          # comment_id: ${{ steps.find_comment.outputs.comment_id }}
+          comment_id: 4564646465446
 
       - name: Verify Create and Update tests
         if: ${{ steps.new_comment.outputs.comment_id == steps.update_comment.outputs.comment_id }}
