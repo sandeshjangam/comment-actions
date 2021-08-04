@@ -60,7 +60,6 @@ jobs:
 
       - name: Create delete comment
         uses: ./
-        id: create_delete_comment
         with:
           type: create
           body: To check the delete action
