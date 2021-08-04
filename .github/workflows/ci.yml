@@ -73,6 +73,7 @@ jobs:
           type: find
           author: github-actions[bot]
           search_term: To check the delete action
+          direction: newer
           number: ${{ steps.get_issue_number.outputs.issue_number }}
 
       - name: Delete comment

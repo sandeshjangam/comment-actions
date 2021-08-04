@@ -6288,7 +6288,7 @@ async function run() {
 	let actionType; let body;
 	let issueNumber; let commentId;
 	let searchTerm; let author;
-	let reactions;
+	let direction; let reactions;
 
 	const allowedReactions = [
 		'+1',
@@ -6442,31 +6442,58 @@ async function run() {
 			return outVars;
 		}
 
+		const args = {
+			owner,
+			repo,
+			issue_number: issueNumber,
+		};
+
 		let foundComment = false;
-		// eslint-disable-next-line no-restricted-syntax
-		for await ( const { data: listComments } of
-			octokit.paginate.iterator(
+
+		if ( direction === 'older' ) {
+			// eslint-disable-next-line no-restricted-syntax
+			for await ( const { data: listComments } of
+				octokit.paginate.iterator(
+					octokit.rest.issues.listComments,
+					args,
+				)
+			) {
+				// Search a comment which included user comment.
+				const comment = listComments.find(
+					// eslint-disable-next-line no-loop-func
+					( listComment ) => (
+						( searchTerm && listComment.body ? listComment.body.includes( searchTerm ) : true )
+						&& ( author && listComment.user ? listComment.user.login === author : true )
+					),
+				);
+
+				// If a comment found, assign.
+				if ( comment ) {
+					foundComment = comment;
+					break;
+				}
+			}
+		} else {
+			// Find a newer comment.
+			const listComments = await octokit.paginate(
 				octokit.rest.issues.listComments,
-				{
-					owner,
-					repo,
-					issue_number: issueNumber,
-				},
-			)
-		) {
+				args,
+			);
+
+			// Reverse the comments.
+			listComments.reverse();
+
 			// Search a comment which included user comment.
 			const comment = listComments.find(
-				// eslint-disable-next-line no-loop-func
 				( listComment ) => (
 					( searchTerm && listComment.body ? listComment.body.includes( searchTerm ) : true )
 					&& ( author && listComment.user ? listComment.user.login === author : true )
 				),
 			);
 
-			// If a comment found, return.
+			// If a comment found, assign.
 			if ( comment ) {
 				foundComment = comment;
-				break;
 			}
 		}
 
@@ -6524,6 +6551,7 @@ async function run() {
 		issueNumber = core.getInput( 'number' );
 		commentId = core.getInput( 'comment_id' );
 		searchTerm = core.getInput( 'search_term' );
+		direction = core.getInput( 'direction' );
 		author = core.getInput( 'author' );
 		reactions = core.getInput( 'reactions' );
 
