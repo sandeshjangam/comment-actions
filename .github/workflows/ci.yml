@@ -60,13 +60,6 @@ jobs:
 
       - name: Create delete comment
         uses: ./
-        with:
-          type: create
-          body: To check the delete action
-          number: ${{ steps.get_issue_number.outputs.issue_number }}
-
-      - name: Create delete comment
-        uses: ./
         id: create_delete_comment
         with:
           type: create

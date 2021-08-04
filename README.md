@@ -12,10 +12,10 @@ A GitHub action to create, update, append, prepend, delete or find a comment on 
 | ------------- | ---------------------------------------------------------------------------- | -------- | -------------------------- |
 | `token`       | A GitHub token.                                                              | `false`  | `${{ github.token }}`      |
 | `repository`  | Owner and repository name. e.g. `sandeshjangam/comment-actions`              | `false`  | `${{ github.repository }}` |
-| `type`        | `create`                                                                     | `true`   | `N/A`                      |
-| `body`        | Comment body. Required with `create` type.                                   | `true`   | `N/A`                      |
-| `number`      | Number of the pull request or issue. Required with `create` and `find` type. | `true`   | `N/A`                      |
-| `reactions`   | Add comma separated list of reactions to react on the comment. `+1`, `-1`, `laugh`, `hooray`, `confused`, `heart`, `rocket`, `eyes` | `false` | `N/A` |
+| `type`        | `create`                                                                     | `true`   | N/A                        |
+| `body`        | Comment body. Required with `create` type.                                   | `true`   | N/A                        |
+| `number`      | Number of the pull request or issue. Required with `create` and `find` type. | `true`   | N/A                        |
+| `reactions`   | Add comma separated list of reactions to react on the comment. `+1`, `-1`, `laugh`, `hooray`, `confused`, `heart`, `rocket`, `eyes` | `false` | N/A |
 
 ### Update Comment
 
@@ -23,10 +23,10 @@ A GitHub action to create, update, append, prepend, delete or find a comment on 
 | ------------- | ---------------------------------------------------------------------------- | -------- | -------------------------- |
 | `token`       | A GitHub token.                                                              | `false`  | `${{ github.token }}`      |
 | `repository`  | Owner and repository name. e.g. `sandeshjangam/comment-actions`              | `false`  | `${{ github.repository }}` |
-| `type`        | `update`, `append` or `prepend`                                              | `true`   | `N/A`                      |
-| `body`        | Comment body. Required with `update`, `append` or `prepend`                  | `true`   | `N/A`                      |
-| `comment_id`  | Comment id. Required with `update`, `append` or `prepend`                    | `true`   | `N/A`                      |
-| `reactions`   | Add comma separated list of reactions to react on the comment. `+1`, `-1`, `laugh`, `hooray`, `confused`, `heart`, `rocket`, `eyes` | `false` | `N/A` |
+| `type`        | `update`, `append` or `prepend`                                              | `true`   | N/A                        |
+| `body`        | Comment body. Required with `update`, `append` or `prepend`                  | `true`   | N/A                        |
+| `comment_id`  | Comment id. Required with `update`, `append` or `prepend`                    | `true`   | N/A                        |
+| `reactions`   | Add comma separated list of reactions to react on the comment. `+1`, `-1`, `laugh`, `hooray`, `confused`, `heart`, `rocket`, `eyes` | `false` | N/A |
 
 ### Delete Comment
 
@@ -34,8 +34,8 @@ A GitHub action to create, update, append, prepend, delete or find a comment on 
 | ------------- | ---------------------------------------------------------------------------- | -------- | -------------------------- |
 | `token`       | A GitHub token.                                                              | `false`  | `${{ github.token }}`      |
 | `repository`  | Owner and repository name. e.g. `sandeshjangam/comment-actions`              | `false`  | `${{ github.repository }}` |
-| `type`        | `delete`                                                                     | `true`   | `N/A`                      |
-| `comment_id`  | Comment id. Required `delete` type.                                          | `true`   | `N/A`                      |
+| `type`        | `delete`                                                                     | `true`   | N/A                        |
+| `comment_id`  | Comment id. Required `delete` type.                                          | `true`   | N/A                        |
 
 
 ### Find Comment
@@ -44,12 +44,13 @@ A GitHub action to create, update, append, prepend, delete or find a comment on 
 | ------------- | ---------------------------------------------------------------------------- | -------- | -------------------------- |
 | `token`       | A GitHub token.                                                              | `false`  | `${{ github.token }}`      |
 | `repository`  | Owner and repository name. e.g. `sandeshjangam/comment-actions`              | `false`  | `${{ github.repository }}` |
-| `type`        | `find`                                                                       | `true`   | `N/A`                      |
-| `number`      | Number of the pull request or issue. Required with `find` type.              | `true`   | `N/A`                      |
-| `search_term` | Search in body. Can use with conjunction of `author` arg.                    | `true`   | `N/A`                      |
-| `author`      | GitHub user name of the comment author.                                      | `false`  | `N/A`                      |
+| `type`        | `find`                                                                       | `true`   | N/A                        |
+| `number`      | Number of the pull request or issue. Required with `find` type.              | `true`   | N/A                        |
+| `search_term` | Search in body. Can use with conjunction of `author` arg.                    | `true`   | N/A                        |
+| `author`      | GitHub user name of the comment author.                                      | `false`  | N/A                        |
+| `direction`   | `older` - To find an older comment. `newer` - To find a newer comment.'      | `false`  | `older`                    |
 
-Note - To find a comment you can use either search_term or author and search_term both.
+Note - To find a comment you can use either `search_term` or `author` and `search_term` both.
 
 ## Outputs
 
