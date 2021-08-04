@@ -1,6 +1,9 @@
 # Smart Comment Actions
 
-[![CI](https://github.com/sandeshjangam/comment-actions/workflows/CI/badge.svg)](https://github.com/sandeshjangam/comment-actions/actions?query=workflow%3ACI)
+[![Tests](https://github.com/sandeshjangam/comment-actions/workflows/CI/badge.svg)](https://github.com/sandeshjangam/comment-actions/actions?query=workflow%3ACI)
+[![Release](https://img.shields.io/github/v/release/sandeshjangam/comment-actions)](https://github.com/marketplace/actions/smart-comment-actions)
+[![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
 
 A GitHub action to create, update, append, prepend, delete or find a comment on pull request or issue.
 
